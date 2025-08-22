@@ -1,0 +1,57 @@
+name: CI Pipeline
+
+# Gatilhos: o workflow roda em push para a branch main ou em qualquer pull request
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # Primeiro Job: Build
+  build:
+    runs-on: ubuntu-latest # Define que a máquina para rodar será um Linux (Ubuntu)
+
+    steps:
+      # 1. Baixa o código do repositório para a máquina virtual
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Configura o ambiente Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18' # Define a versão do Node
+          cache: 'npm'
+
+      # 3. Instala as dependências do projeto
+      - name: Install dependencies
+        run: npm install
+
+      # 4. Executa o script de build (compila o TypeScript)
+      - name: Build project
+        run: npm run build
+
+  # Segundo Job: Teste
+  test:
+    runs-on: ubuntu-latest
+    # AQUI ESTÁ A DEPENDÊNCIA: O job 'test' só roda se o job 'build' terminar com sucesso
+    needs: build
+
+    steps:
+      # Passos similares ao build para preparar o ambiente
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      # Executa o script de teste
+      - name: Run tests
+        run: npm run test
