@@ -51,7 +51,7 @@ router.delete("/todo/:id", (req: Request, res: Response) => {
     if (!req.params?.id) {
       throw "Requisição sem ID";
     }
-    const idParaDeletar: string = Number(req.params.id);
+    const idParaDeletar = Number(req.params.id);
 
     // -1 se não encontrou
     const index = tarefas.findIndex((tarefa) => tarefa.id === idParaDeletar);

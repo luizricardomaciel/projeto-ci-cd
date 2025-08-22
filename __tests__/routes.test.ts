@@ -64,3 +64,30 @@ describe("DELETE /todo/:id", () => {
     ]);
   });
 });
+
+describe("POST /todo - Cenário de Erro", () => {
+  it("should return an error when task description is not provided", async () => {
+    const response = await request
+      .post("/todo")
+      .send({}); // Enviando um corpo vazio
+
+    expect(response.status).toBe(400);
+
+    expect(response.body).toEqual({
+      erro: "formato de requisição incorreto :(",
+    });
+  });
+});
+
+describe("DELETE /todo/:id - Cenário de Erro", () => {
+  it("should return an error when task id does not exist", async () => {
+    // Garantindo que o ID 999 não existe no array de tarefas
+    const response = await request.delete("/todo/999");
+
+    expect(response.status).toBe(404);
+
+    expect(response.body).toEqual({
+      mensagem: "ID não encontrado!",
+    });
+  });
+});
